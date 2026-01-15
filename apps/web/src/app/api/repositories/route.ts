@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
+import { ensureRootGitDirectory } from '@/lib/config'
 
 // Server mode: when deployed (e.g., Vercel), will use database instead of filesystem
 const SERVER_MODE = process.env.SERVER_MODE === 'true'
@@ -16,10 +17,8 @@ export async function GET() {
       })
     }
 
-    // Local mode: use filesystem
-    // Navigate up 3 levels from apps/web to reach the git directory
-    const currentPath = process.cwd()
-    const basePath = path.dirname(path.dirname(path.dirname(currentPath)))
+    // Local mode: use filesystem with global config
+    const basePath = ensureRootGitDirectory()
 
     let repositories: string[] = []
 

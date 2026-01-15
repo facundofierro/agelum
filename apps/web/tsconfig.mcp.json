@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": false,
+    "outDir": "dist-mcp",
+    "target": "ES2022",
+    "isolatedModules": false,
+    "jsx": "react"
+  },
+  "include": ["src/lib/mcp.ts", "src/lib/config.ts", "scripts/mcp-runner.ts"]
+}
