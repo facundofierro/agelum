@@ -7,7 +7,8 @@ out/
 
 # Build
 dist/
-.turbo
+.turbo/*
+.turbo/cookies/*
 .pnpm-store/*
 
 # pnpm
