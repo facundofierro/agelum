@@ -11,6 +11,11 @@ const MDEditor = dynamic(
   { ssr: false }
 )
 
+const MarkdownPreview = dynamic(
+  () => import('@uiw/react-markdown-preview').then((mod) => mod.default),
+  { ssr: false }
+)
+
 interface FileViewerProps {
   file: { path: string; content: string } | null
   onFileSaved?: () => void
@@ -116,13 +121,13 @@ export default function FileViewer({ file, onFileSaved }: FileViewerProps) {
           />
         ) : (
           <div className="p-4">
-            <MDEditor.Markdown 
-              source={content} 
-              style={{ 
-                background: 'transparent', 
+            <MarkdownPreview
+              source={content}
+              style={{
+                background: 'transparent',
                 color: '#d1d5db',
                 fontSize: '14px'
-              }} 
+              }}
             />
           </div>
         )}
