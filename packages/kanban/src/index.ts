@@ -1,5 +1,3 @@
-import './styles.css';
-
 export { KanbanBoard, KanbanColumn, KanbanCard, KanbanCardOverlay } from './components/Kanban';
 export type {
   KanbanBoardProps,

@@ -5,7 +5,6 @@ import FileBrowser from "@/components/FileBrowser";
 import FileViewer from "@/components/FileViewer";
 import TaskKanban from "@/components/TaskKanban";
 import EpicsKanban from "@/components/EpicsKanban";
-import TestKanban from "@/components/TestKanban";
 import { Kanban, Files, Layers, FolderGit2, Lightbulb, BookOpen, Map, Terminal, ListTodo } from "lucide-react";
 
 interface FileNode {

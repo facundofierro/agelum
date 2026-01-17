@@ -1,68 +1,23 @@
 'use client'
 
-import { DataViews, type IDataViewsClient, type TableSchema } from 'kanban'
+import { KanbanBoard, type KanbanCardType, type KanbanColumnType } from '@agelum/kanban'
 
-const testSchema: TableSchema = {
-  id: 'test',
-  name: 'Test',
-  fields: [
-    { id: 'title', name: 'Title', type: 'text', isPrimary: true },
-    { id: 'status', name: 'Status', type: 'select', options: [
-      { id: 'todo', name: 'To Do', color: 'yellow' },
-      { id: 'doing', name: 'Doing', color: 'blue' },
-      { id: 'done', name: 'Done', color: 'green' }
-    ]}
-  ]
-}
+const columns: KanbanColumnType[] = [
+  { id: 'todo', title: 'To Do', color: 'yellow', order: 0 },
+  { id: 'doing', title: 'Doing', color: 'blue', order: 1 },
+  { id: 'done', title: 'Done', color: 'green', order: 2 },
+]
 
-const testData = [
-  {
-    id: '1',
-    fields: {
-      title: 'Test Task 1',
-      status: 'To Do'
-    },
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: '2',
-    fields: {
-      title: 'Test Task 2',
-      status: 'Doing'
-    },
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: '3',
-    fields: {
-      title: 'Test Task 3',
-      status: 'Done'
-    },
-    createdAt: new Date().toISOString()
-  }
+const cards: KanbanCardType[] = [
+  { id: '1', title: 'Test Task 1', columnId: 'todo', order: 0 },
+  { id: '2', title: 'Test Task 2', columnId: 'doing', order: 1 },
+  { id: '3', title: 'Test Task 3', columnId: 'done', order: 2 },
 ]
 
 export default function TestKanban() {
-  const dbClient: IDataViewsClient = {
-    getRecords: async () => {
-      console.log('Test data:', JSON.stringify(testData, null, 2))
-      return testData
-    },
-    createRecord: async () => testData[0],
-    updateRecord: async () => testData[0],
-    deleteRecord: async () => {}
-  }
-
   return (
     <div className="h-full">
-      <DataViews
-        schema={testSchema}
-        dbClient={dbClient}
-        config={{
-          defaultView: 'kanban',
-          language: 'en'
-        }}
-      />
+      <KanbanBoard columns={columns} cards={cards} />
     </div>
   )
 }
