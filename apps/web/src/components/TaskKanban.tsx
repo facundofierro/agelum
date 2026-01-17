@@ -1,7 +1,21 @@
 'use client'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { KanbanBoard, type KanbanCardType, type KanbanColumnType } from '@agelum/kanban'
+import { 
+  KanbanBoard, 
+  type KanbanCardType, 
+  type KanbanColumnType,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Label,
+  Textarea,
+  Button
+} from '@agelum/kanban'
 
 interface Task {
   id: string
@@ -30,6 +44,10 @@ export default function TaskKanban({ repo, onTaskSelect }: TaskKanbanProps) {
   const [refreshKey, setRefreshKey] = useState(0)
   const [users, setUsers] = useState<string[]>([])
   const [assigneeFilter, setAssigneeFilter] = useState<string>('all')
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [newTaskColumn, setNewTaskColumn] = useState('')
+  const [newTaskTitle, setNewTaskTitle] = useState('')
+  const [newTaskDescription, setNewTaskDescription] = useState('')
 
   const fetchTasks = useCallback(async () => {
     const res = await fetch(`/api/tasks?repo=${encodeURIComponent(repo)}`)
@@ -75,9 +93,17 @@ export default function TaskKanban({ repo, onTaskSelect }: TaskKanbanProps) {
 
   const handleAddCard = useCallback(
     async (columnId: string) => {
-      const title = window.prompt('Task title')
-      if (!title) return
-      const description = window.prompt('Task description') || ''
+      setNewTaskColumn(columnId)
+      setNewTaskTitle('')
+      setNewTaskDescription('')
+      setIsAddDialogOpen(true)
+    },
+    []
+  )
+
+  const handleCreateTask = useCallback(
+    async () => {
+      if (!newTaskTitle.trim()) return
 
       const res = await fetch('/api/tasks', {
         method: 'POST',
@@ -85,7 +111,11 @@ export default function TaskKanban({ repo, onTaskSelect }: TaskKanbanProps) {
         body: JSON.stringify({
           repo,
           action: 'create',
-          data: { title, description, state: columnId },
+          data: { 
+            title: newTaskTitle.trim(), 
+            description: newTaskDescription.trim(), 
+            state: newTaskColumn 
+          },
         }),
       })
 
@@ -93,8 +123,11 @@ export default function TaskKanban({ repo, onTaskSelect }: TaskKanbanProps) {
       if (!res.ok) throw new Error(data.error || 'Failed to create task')
 
       setRefreshKey((k) => k + 1)
+      setIsAddDialogOpen(false)
+      setNewTaskTitle('')
+      setNewTaskDescription('')
     },
-    [repo]
+    [repo, newTaskTitle, newTaskDescription, newTaskColumn]
   )
 
   const handleCardMove = useCallback(

@@ -134,22 +134,77 @@ export default function EpicsKanban({ repo, onEpicSelect }: EpicsKanbanProps) {
   )
 
   return (
-    <div className="h-full">
-      <KanbanBoard
-        columns={columns}
-        cards={cards}
-        onAddCard={handleAddCard}
-        onCardMove={handleCardMove}
-        onCardClick={(card: KanbanCardType) => {
-          const epic = epics.find((e) => e.id === card.id)
-          if (epic) onEpicSelect(epic)
-        }}
-        onCardEdit={(card: KanbanCardType) => {
-          const epic = epics.find((e) => e.id === card.id)
-          if (epic) onEpicSelect(epic)
-        }}
-        key={refreshKey}
-      />
-    </div>
+    <>
+      <div className="h-full">
+        <KanbanBoard
+          columns={columns}
+          cards={cards}
+          onAddCard={handleAddCard}
+          onCardMove={handleCardMove}
+          onCardClick={(card: KanbanCardType) => {
+            const epic = epics.find((e) => e.id === card.id)
+            if (epic) onEpicSelect(epic)
+          }}
+          onCardEdit={(card: KanbanCardType) => {
+            const epic = epics.find((e) => e.id === card.id)
+            if (epic) onEpicSelect(epic)
+          }}
+          key={refreshKey}
+        />
+      </div>
+
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Create New Epic</DialogTitle>
+            <DialogDescription>
+              Add a new epic to {columns.find(c => c.id === newEpicColumn)?.title || 'the board'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="epic-title">Title</Label>
+              <Input
+                id="epic-title"
+                placeholder="Epic title"
+                value={newEpicTitle}
+                onChange={(e) => setNewEpicTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    handleCreateEpic()
+                  }
+                }}
+                autoFocus
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="epic-description">Description</Label>
+              <Textarea
+                id="epic-description"
+                placeholder="Epic description (optional)"
+                value={newEpicDescription}
+                onChange={(e) => setNewEpicDescription(e.target.value)}
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setIsAddDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateEpic}
+              disabled={!newEpicTitle.trim()}
+            >
+              Create Epic
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
