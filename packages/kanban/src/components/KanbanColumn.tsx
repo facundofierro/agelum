@@ -69,16 +69,18 @@ export function KanbanColumn({
   return (
     <div
       className={cn(
-        'flex h-full flex-1 min-w-[240px] flex-col rounded-2xl bg-muted/30 dark:bg-white/[0.02] transition-all duration-200',
-        isOver && 'bg-muted/50 dark:bg-white/[0.05] ring-1 ring-primary/20'
+        'group flex h-full flex-1 min-w-0 flex-col rounded-2xl transition-all duration-200',
+        'bg-gray-800/50 backdrop-blur-sm',
+        'border border-gray-700/40',
+        isOver && 'bg-gray-700/60 border-blue-500/40'
       )}
     >
       {/* Column Header */}
-      <div className="flex items-center justify-between px-4 py-3">
+      <div className="flex items-center justify-between px-4 py-3.5">
         <div className="flex items-center gap-2.5">
-          <div className={cn('h-2 w-2 rounded-full', columnColorMap[color])} />
-          <h3 className="font-medium text-sm text-foreground/80">{column.title}</h3>
-          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-muted/60 dark:bg-white/5 px-1.5 text-[11px] font-medium text-muted-foreground">
+          <div className={cn('h-2.5 w-2.5 rounded-full shadow-sm', columnColorMap[color])} />
+          <h3 className="font-semibold text-sm text-gray-200">{column.title}</h3>
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-md bg-gray-700/60 px-1.5 text-[11px] font-medium text-gray-400">
             {cards.length}
           </span>
         </div>
@@ -87,7 +89,7 @@ export function KanbanColumn({
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60"
+              className="h-7 w-7 rounded-lg text-gray-400 hover:text-gray-200 hover:bg-gray-700/50"
               onClick={() => onAddCard(column.id)}
             >
               <Plus className="h-3.5 w-3.5" />
@@ -96,7 +98,7 @@ export function KanbanColumn({
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-7 w-7 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60"
+            className="h-7 w-7 rounded-lg text-gray-400 hover:text-gray-200 hover:bg-gray-700/50"
           >
             <MoreHorizontal className="h-3.5 w-3.5" />
           </Button>
@@ -104,12 +106,12 @@ export function KanbanColumn({
       </div>
 
       {/* Cards Container */}
-      <ScrollArea className="flex-1 px-2">
+      <ScrollArea className="flex-1 px-2.5">
         <div
           ref={setNodeRef}
           className={cn(
-            'flex flex-col gap-2 pb-2 min-h-[80px] transition-colors duration-200',
-            isOver && 'bg-primary/[0.02]'
+            'flex flex-col gap-2.5 pb-2.5 min-h-[80px] transition-colors duration-200 rounded-xl',
+            isOver && 'bg-gray-700/30'
           )}
         >
           <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
@@ -124,7 +126,7 @@ export function KanbanColumn({
             ))}
           </SortableContext>
           {cards.length === 0 && (
-            <div className="flex items-center justify-center h-16 text-xs text-muted-foreground/60">
+            <div className="flex items-center justify-center h-20 text-xs text-gray-500">
               No cards
             </div>
           )}
@@ -133,10 +135,10 @@ export function KanbanColumn({
 
       {/* Add Card Button */}
       {onAddCard && (
-        <div className="p-2 pt-0">
+        <div className="p-2.5 pt-0">
           <Button
             variant="ghost"
-            className="w-full h-9 justify-start gap-2 text-muted-foreground/70 hover:text-foreground hover:bg-muted/50 rounded-xl text-xs font-normal"
+            className="w-full h-9 justify-center gap-2 text-gray-400 hover:text-gray-200 hover:bg-gray-700/50 rounded-xl text-xs font-normal border border-dashed border-gray-600/40 hover:border-gray-500/50 transition-all"
             onClick={() => onAddCard(column.id)}
           >
             <Plus className="h-3.5 w-3.5" />

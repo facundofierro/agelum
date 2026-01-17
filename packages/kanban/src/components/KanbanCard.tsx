@@ -108,12 +108,13 @@ export function KanbanCard({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group relative flex flex-col gap-2.5 rounded-xl bg-card p-3.5 transition-all duration-200',
-        'border border-border/30 dark:border-white/[0.06]',
-        'shadow-sm dark:shadow-none',
-        'hover:shadow-md hover:border-border/50 dark:hover:border-white/10 dark:hover:bg-card/80',
-        isCurrentlyDragging && 'opacity-40 shadow-lg scale-[1.02] ring-2 ring-primary/30',
-        isOverlay && 'rotate-2 shadow-2xl scale-105',
+        'group relative flex flex-col gap-2.5 rounded-xl p-3.5 transition-all duration-200',
+        'bg-gray-900/90',
+        'border border-gray-700/50',
+        'shadow-sm shadow-black/10',
+        'hover:shadow-lg hover:shadow-black/20 hover:border-gray-600/60 hover:bg-gray-800/90',
+        isCurrentlyDragging && 'opacity-50 shadow-xl scale-[1.02] ring-2 ring-blue-500/40 border-blue-500/30',
+        isOverlay && 'rotate-2 shadow-2xl scale-105 border-blue-400/50',
         onClick && 'cursor-pointer'
       )}
       onClick={() => onClick?.(card)}
@@ -174,11 +175,11 @@ export function KanbanCard({
       )}
 
       {/* Title */}
-      <h4 className="text-[13px] font-medium leading-snug pr-12 text-foreground/90">{card.title}</h4>
+      <h4 className="text-[13px] font-medium leading-snug pr-12 text-gray-100">{card.title}</h4>
 
       {/* Description */}
       {card.description && (
-        <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed">
+        <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">
           {card.description}
         </p>
       )}
