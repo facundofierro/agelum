@@ -21,7 +21,7 @@ interface Task {
   id: string
   title: string
   description: string
-  state: 'pending' | 'doing' | 'done'
+  state: 'backlog' | 'priority' | 'pending' | 'doing' | 'done'
   createdAt: string
   epic?: string
   assignee?: string
@@ -29,9 +29,11 @@ interface Task {
 }
 
 const columns: KanbanColumnType[] = [
-  { id: 'pending', title: 'Pending', color: 'yellow', order: 0 },
-  { id: 'doing', title: 'Doing', color: 'blue', order: 1 },
-  { id: 'done', title: 'Done', color: 'green', order: 2 },
+  { id: 'backlog', title: 'Backlog', color: 'gray', order: 0 },
+  { id: 'priority', title: 'Priority', color: 'red', order: 1 },
+  { id: 'pending', title: 'Pending', color: 'yellow', order: 2 },
+  { id: 'doing', title: 'Doing', color: 'blue', order: 3 },
+  { id: 'done', title: 'Done', color: 'green', order: 4 },
 ]
 
 interface TaskKanbanProps {
@@ -42,8 +44,6 @@ interface TaskKanbanProps {
 export default function TaskKanban({ repo, onTaskSelect }: TaskKanbanProps) {
   const [tasks, setTasks] = useState<Task[]>([])
   const [refreshKey, setRefreshKey] = useState(0)
-  const [users, setUsers] = useState<string[]>([])
-  const [assigneeFilter, setAssigneeFilter] = useState<string>('all')
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [newTaskColumn, setNewTaskColumn] = useState('')
   const [newTaskTitle, setNewTaskTitle] = useState('')
@@ -59,28 +59,8 @@ export default function TaskKanban({ repo, onTaskSelect }: TaskKanbanProps) {
     fetchTasks()
   }, [fetchTasks, refreshKey])
 
-  useEffect(() => {
-    if (!repo) return
-    fetch(`/api/users?repo=${encodeURIComponent(repo)}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(Array.isArray(data.users) ? data.users : [])
-      })
-      .catch(() => {
-        setUsers([])
-      })
-  }, [repo])
-
-  const filteredTasks = useMemo(() => {
-    return tasks.filter((task) => {
-      if (assigneeFilter === 'all') return true
-      if (assigneeFilter === 'unassigned') return !task.assignee
-      return task.assignee === assigneeFilter
-    })
-  }, [tasks, assigneeFilter])
-
   const cards = useMemo<KanbanCardType[]>(() => {
-    return filteredTasks.map((task, index) => ({
+    return tasks.map((task, index) => ({
       id: task.id,
       title: task.title,
       description: [task.description, task.epic ? `Epic: ${task.epic}` : null, task.assignee ? `Assignee: ${task.assignee}` : null]
@@ -89,7 +69,7 @@ export default function TaskKanban({ repo, onTaskSelect }: TaskKanbanProps) {
       columnId: task.state,
       order: index,
     }))
-  }, [filteredTasks])
+  }, [tasks])
 
   const handleAddCard = useCallback(
     async (columnId: string) => {
@@ -162,25 +142,6 @@ export default function TaskKanban({ repo, onTaskSelect }: TaskKanbanProps) {
   return (
     <>
       <div className="h-full">
-        <div className="flex items-center justify-end gap-2 px-4 py-2 border-b border-border">
-          <label className="text-sm text-muted-foreground" htmlFor="assignee-filter">
-            Assignee
-          </label>
-          <select
-            id="assignee-filter"
-            value={assigneeFilter}
-            onChange={(e) => setAssigneeFilter(e.target.value)}
-            className="bg-background text-foreground text-sm rounded-md border border-border px-2 py-1"
-          >
-            <option value="all">All</option>
-            <option value="unassigned">Unassigned</option>
-            {users.map((user) => (
-              <option key={user} value={user}>
-                {user}
-              </option>
-            ))}
-          </select>
-        </div>
         <KanbanBoard
           columns={columns}
           cards={cards}
@@ -213,8 +174,8 @@ export default function TaskKanban({ repo, onTaskSelect }: TaskKanbanProps) {
                 id="task-title"
                 placeholder="Task title"
                 value={newTaskTitle}
-                onChange={(e) => setNewTaskTitle(e.target.value)}
-                onKeyDown={(e) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTaskTitle(e.target.value)}
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault()
                     handleCreateTask()
@@ -229,7 +190,7 @@ export default function TaskKanban({ repo, onTaskSelect }: TaskKanbanProps) {
                 id="task-description"
                 placeholder="Task description (optional)"
                 value={newTaskDescription}
-                onChange={(e) => setNewTaskDescription(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewTaskDescription(e.target.value)}
                 rows={4}
               />
             </div>

@@ -6,7 +6,7 @@ interface Task {
   id: string
   title: string
   description: string
-  state: 'pending' | 'doing' | 'done'
+  state: 'backlog' | 'priority' | 'pending' | 'doing' | 'done'
   createdAt: string
   epic?: string
   assignee?: string
@@ -21,12 +21,16 @@ function ensureAgelumStructure(agelumDir: string) {
     'context',
     'actions',
     'skills',
+    path.join('epics', 'backlog'),
+    path.join('epics', 'priority'),
     path.join('epics', 'pending'),
     path.join('epics', 'doing'),
     path.join('epics', 'done'),
+    path.join('tasks', 'backlog'),
+    path.join('tasks', 'priority'),
+    path.join('tasks', 'pending'),
     path.join('tasks', 'doing'),
-    path.join('tasks', 'done'),
-    path.join('tasks', 'pending')
+    path.join('tasks', 'done')
   ]
 
   fs.mkdirSync(agelumDir, { recursive: true })
@@ -39,7 +43,7 @@ function fileNameToId(fileName: string): string {
   return fileName.replace('.md', '')
 }
 
-function parseTaskFile(filePath: string, state: 'pending' | 'doing' | 'done', epic?: string): Task | null {
+function parseTaskFile(filePath: string, state: 'backlog' | 'priority' | 'pending' | 'doing' | 'done', epic?: string): Task | null {
   try {
     const content = fs.readFileSync(filePath, 'utf-8')
     const fileName = path.basename(filePath)
@@ -75,7 +79,7 @@ function parseTaskFile(filePath: string, state: 'pending' | 'doing' | 'done', ep
   }
 }
 
-function readTasksRecursively(dir: string, state: 'pending' | 'doing' | 'done'): Task[] {
+function readTasksRecursively(dir: string, state: 'backlog' | 'priority' | 'pending' | 'doing' | 'done'): Task[] {
   const tasks: Task[] = []
   
   if (!fs.existsSync(dir)) return tasks
@@ -109,7 +113,7 @@ function readTasks(repo: string): Task[] {
   const tasksDir = path.join(agelumDir, 'tasks')
 
   const tasks: Task[] = []
-  const states = ['pending', 'doing', 'done'] as const
+  const states = ['backlog', 'priority', 'pending', 'doing', 'done'] as const
 
   for (const state of states) {
     const stateDir = path.join(tasksDir, state)
@@ -126,7 +130,7 @@ function createTask(repo: string, data: { title: string; description?: string; s
   const agelumDir = path.join(gitDir, repo, 'agelum')
   ensureAgelumStructure(agelumDir)
   const tasksDir = path.join(agelumDir, 'tasks')
-  const state = (data.state as 'pending' | 'doing' | 'done') || 'pending'
+  const state = (data.state as 'backlog' | 'priority' | 'pending' | 'doing' | 'done') || 'pending'
 
   const id = `task-${Date.now()}`
   const stateDir = path.join(tasksDir, state)
